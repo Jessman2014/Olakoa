@@ -5,7 +5,7 @@ public class User {
 	private String lastName;
 	private String email;
 	private String username;
-	private String role;
+	private Role role;
 	private String id;
 	private String password;
 	private boolean enabled;
@@ -34,10 +34,10 @@ public class User {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	public String getRole() {
+	public Role getRole() {
 		return role;
 	}
-	public void setRole(String role) {
+	public void setRole(Role role) {
 		this.role = role;
 	}
 	public String getId() {
@@ -80,7 +80,7 @@ public class User {
 		private String lastName;
 		private String email;
 		private String username;
-		private String role;
+		private Role role;
 		private String id;
 		private String password;
 		private boolean enabled;
@@ -110,7 +110,7 @@ public class User {
 			return this;
 		}
 		
-		public Builder role(String role) {
+		public Builder role(Role role) {
 			this.role = role;
 			return this;
 		}

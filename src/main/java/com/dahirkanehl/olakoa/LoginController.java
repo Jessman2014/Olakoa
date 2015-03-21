@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.dahirkanehl.olakoa.users.Role;
 import com.dahirkanehl.olakoa.users.User;
 import com.dahirkanehl.olakoa.users.UserService;
 
@@ -29,7 +30,10 @@ public class LoginController {
 		User user = userService.getUser(username, password);
 		if(user != null) {
 			session.setAttribute("user", user);
-			return "redirect:/tasks";
+			if (user.getRole() == Role.USER)
+				return "redirect:/user/drinks";
+			else
+				return "redirect:/home/shop";
 		} else {
 			return "redirect:/login?error=true";
 		}
