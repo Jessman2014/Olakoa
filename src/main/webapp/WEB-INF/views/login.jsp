@@ -1,36 +1,37 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-	<head>
-		<title>Login</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
-		<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
-		<script src="login.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-		<script src="http://cdn.jsdelivr.net/jquery.validation/1.13.1/jquery.validate.min.js"></script>
-	</head>
-	<body>
-		<div class="container">
-			<div class="row">
-				<div class="col-md-4">
-					<h1>Please sign in</h1>
-					<span class="label label-warning">Incorrect username or
-						password. Please try again.</span>
-					<form role="form" method="post" action="/tasker/Login">
-						<div class="form-group">
-							<input type="text" name="username" class="form-control"
-								placeholder="Username" required>
-						</div>
-						<div class="form-group">
-							<input type="password" name="password" class="form-control"
-								placeholder="Password" required>
-						</div>
-						<button type="submit" class="btn">Submit</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</body>
+<%@ page isELIgnored="false" %>     
+<%@ page session="false"%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Tasker Login</title>
+<script src="https://code.jquery.com/jquery-2.1.3.js"
+	type="text/javascript"></script>
+<link href="resources/tasker.css" rel="stylesheet">
+<link
+	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"
+	rel="stylesheet">
+<script
+	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"
+	type="text/javascript"></script>
+</head>
+<body>
+	<div class="container">
+
+
+		<form class="form-signin" action="login" method="POST">
+			<h2 class="form-signin-heading">Please sign in</h2>
+			<c:if test="${error}">
+				<div class="label-md label-warning" style="margin:1em;padding:.5em;"><i>Unknown username, password combination. Please re-enter.</i></div>
+			</c:if>			
+			<label for="username" class="sr-only">Username</label> 
+			<input type="text" id="username" class="form-control" placeholder="username" required autofocus name="username"> 
+			<label for="inputPassword" class="sr-only">Password</label> 
+			<input type="password" id="inputPassword" class="form-control" placeholder="password" required name="password">
+			<button class="btn btn-lg btn-primary btn-block" type="submit">Sign	in</button>
+		</form>
+	</div>
+</body>
 </html>

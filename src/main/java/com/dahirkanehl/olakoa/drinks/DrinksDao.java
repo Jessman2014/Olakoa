@@ -1,25 +1,32 @@
 package com.dahirkanehl.olakoa.drinks;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.stereotype.Repository;
+
+import com.dahirkanehl.olakoa.users.UserDao;
 
 @Repository
 public class DrinksDao {
 
 	private String csvFile = "drinks.db";
 	private Map<String, Drink> drinks = new HashMap<String, Drink>();
+	private UserDao userDatabase;
 	
+	@PostConstruct
 	public void init() {
 		List<String[]> DrinkStringList = getDrinksStrings();
 		for (String[] strings : DrinkStringList) {
@@ -46,6 +53,7 @@ public class DrinksDao {
 			while(line != null) {
 				String[] drinkString = line.split(",");
 				drinkStringList.add(drinkString);
+				line = br.readLine();
 			}
 			br.close();
 		} catch (FileNotFoundException e) {
@@ -55,33 +63,71 @@ public class DrinksDao {
 		}
 		return drinkStringList;
 	}
+	
+	private void writeNewDrink(Drink d) {
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(csvFile, true));
+			bw.newLine();
+			bw.write(d.toString());
+			bw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void replaceDrinks() {
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(csvFile, false));
+			for(Drink d: drinks.values()) {
+				bw.write(d.toString());
+				bw.newLine();
+			}
+			bw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public List<Drink> findByOwner(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Drink> drinkList = new ArrayList<Drink>();
+		for(Drink d: drinks.values()) {
+			if(d.getOwnerId().equals(id))
+				drinkList.add(d);
+		}
+		return drinkList;
 	}
 
 	public List<Drink> findPostedEnabled() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Drink> drinkList = new ArrayList<Drink>();
+		List<String> postedEnabledUserIds = userDatabase.getPostedEnabledUserIds();
+		for(Drink d: drinks.values()) {
+			if(d.isPosted() && postedEnabledUserIds.contains(d.getOwnerId()))
+				drinkList.add(d);
+		}
+		return drinkList;
 	}
 
-	public Collection<Drink> findAllDrinks() {
-		return drinks.values();
+	public List<Drink> findAllDrinks() {
+		List<Drink> drinkList = new ArrayList<Drink>();
+		for(Drink d: drinks.values()) {
+			drinkList.add(d);
+		}
+		return drinkList;
 	}
 
 	public void addDrink(Drink newDrink) {
-		// TODO Auto-generated method stub
-		
+		drinks.put(newDrink.getId(), newDrink);
+		writeNewDrink(newDrink);
 	}
 
 	public Drink findById(String did) {
-		// TODO Auto-generated method stub
-		return null;
+		return drinks.get(did);
 	}
 
 	public void updateDrink(Drink d) {
-		// TODO Auto-generated method stub
-		
+		drinks.replace(d.getId(), d);
+		replaceDrinks();
 	}
 }

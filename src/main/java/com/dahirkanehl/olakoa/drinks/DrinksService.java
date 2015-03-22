@@ -1,6 +1,5 @@
 package com.dahirkanehl.olakoa.drinks;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,11 +49,7 @@ public class DrinksService {
 	}
 
 	public List<Drink> findAllDrinksForShopper() {
-		List<Drink> drinks = new ArrayList<Drink>();
-		for(Drink d: database.findAllDrinks()) {
-			drinks.add(d);
-		}
-		return drinks;
+		return database.findAllDrinks();
 	}
 	
 }

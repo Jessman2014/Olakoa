@@ -79,7 +79,7 @@ public class Drink {
 	
 	@Override
 	public String toString() {
-		return "User [name=" + name + " " + ", id=" + id + ", unitCost="+ unitCost + ", ownerId="+ ownerId + ", posted=" + posted + "]";
+		return id + "," + name + "," + name + "," + thumbnail + ","+ description + "," + unitCost + "," + ownerId + "," + posted;
 	}
 
 	public static class Builder {
