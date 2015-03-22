@@ -6,10 +6,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Tasker Login</title>
+<title>Olakoa Login</title>
 <script src="https://code.jquery.com/jquery-2.1.3.js"
 	type="text/javascript"></script>
-<link href="resources/tasker.css" rel="stylesheet">
+<link href="resources/drinks.css" rel="stylesheet">
 <link
 	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"
 	rel="stylesheet">

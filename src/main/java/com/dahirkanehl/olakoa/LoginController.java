@@ -41,8 +41,13 @@ public class LoginController {
 			
 	@RequestMapping(value={"/", "/login"}, method=RequestMethod.GET)
 	public String login(@RequestParam(value="error", required=false, defaultValue="false") Boolean error, Model model) {
+		//if (user == null) {
 		model.addAttribute("error", error);
-		return "login";
+			return "login";
+		//}
+		//if (user.getRole() == Role.USER)
+		//	return "redirect:/user/drinks";
+		//return "redirect:/home/shop";
 	}
 	
 	@RequestMapping(value="/logout")

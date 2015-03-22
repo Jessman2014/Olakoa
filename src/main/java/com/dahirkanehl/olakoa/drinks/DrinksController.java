@@ -25,7 +25,7 @@ public class DrinksController {
 	private enum Sort { NAME, COST, POSTED };
 	private enum Order { ASC, DESC };
 	
-	@ModelAttribute("Drinks")
+	@ModelAttribute("drinks")
 	private List<Drink> drinks (User user, 
 			@RequestParam(required=false, defaultValue="NAME") Sort sort,  
 			@RequestParam(required=false, defaultValue="ASC") Order order) {

@@ -3,20 +3,23 @@ package com.dahirkanehl.olakoa.users;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class UserDao {
-	private String csvFile = "users.db";
+	private @Autowired ServletContext servletContext;
 	private Map<String, User> users = new HashMap<String, User>();
 	
 	@PostConstruct
@@ -39,9 +42,11 @@ public class UserDao {
 	
 	private List<String[]> getUsersStrings() {
 		List<String[]> userStringList = new ArrayList<String[]>();
-		
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(csvFile));
+			InputStream inputStream = null;
+
+			inputStream = servletContext.getResourceAsStream("/WEB-INF/content/users.db");
+			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 			String line = br.readLine();
 			while(line != null) {
 				String[] userString = line.split(",");
@@ -49,11 +54,13 @@ public class UserDao {
 				line = br.readLine();
 			}
 			br.close();
+			inputStream.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		} 
+		
 		return userStringList;
 	}
 	

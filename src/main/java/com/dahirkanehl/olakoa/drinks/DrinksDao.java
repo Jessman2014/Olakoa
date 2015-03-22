@@ -1,11 +1,10 @@
 package com.dahirkanehl.olakoa.drinks;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -14,7 +13,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.dahirkanehl.olakoa.users.UserDao;
@@ -22,7 +23,7 @@ import com.dahirkanehl.olakoa.users.UserDao;
 @Repository
 public class DrinksDao {
 
-	private String csvFile = "drinks.db";
+	private @Autowired ServletContext servletContext;
 	private Map<String, Drink> drinks = new HashMap<String, Drink>();
 	private UserDao userDatabase;
 	
@@ -48,7 +49,10 @@ public class DrinksDao {
 		List<String[]> drinkStringList = new ArrayList<String[]>();
 		
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(csvFile));
+			InputStream inputStream = null;
+			
+			inputStream = servletContext.getResourceAsStream("/WEB-INF/content/drinks.db");
+			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 			String line = br.readLine();
 			while(line != null) {
 				String[] drinkString = line.split(",");
@@ -56,6 +60,7 @@ public class DrinksDao {
 				line = br.readLine();
 			}
 			br.close();
+			inputStream.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -63,7 +68,7 @@ public class DrinksDao {
 		}
 		return drinkStringList;
 	}
-	
+	/*
 	private void writeNewDrink(Drink d) {
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(csvFile, true));
@@ -88,7 +93,7 @@ public class DrinksDao {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 	public List<Drink> findByOwner(String id) {
 		List<Drink> drinkList = new ArrayList<Drink>();
@@ -119,7 +124,7 @@ public class DrinksDao {
 
 	public void addDrink(Drink newDrink) {
 		drinks.put(newDrink.getId(), newDrink);
-		writeNewDrink(newDrink);
+		//writeNewDrink(newDrink);
 	}
 
 	public Drink findById(String did) {
@@ -128,6 +133,6 @@ public class DrinksDao {
 
 	public void updateDrink(Drink d) {
 		drinks.replace(d.getId(), d);
-		replaceDrinks();
+		//replaceDrinks();
 	}
 }
