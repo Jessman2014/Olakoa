@@ -25,7 +25,8 @@ public class DrinksDao {
 
 	private @Autowired ServletContext servletContext;
 	private Map<String, Drink> drinks = new HashMap<String, Drink>();
-	private UserDao userDatabase;
+	
+	private @Autowired UserDao userDatabase;
 	
 	@PostConstruct
 	public void init() {

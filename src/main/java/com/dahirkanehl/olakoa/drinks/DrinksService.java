@@ -45,11 +45,11 @@ public class DrinksService {
 	}
 
 	public List<Drink> findAllDrinksForAdmin() {
-		return database.findPostedEnabled();
+		return database.findAllDrinks();
 	}
 
 	public List<Drink> findAllDrinksForShopper() {
-		return database.findAllDrinks();
+		return database.findPostedEnabled();
 	}
 	
 }

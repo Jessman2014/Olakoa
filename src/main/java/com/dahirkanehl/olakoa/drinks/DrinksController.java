@@ -1,5 +1,6 @@
 package com.dahirkanehl.olakoa.drinks;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
@@ -72,20 +73,22 @@ public class DrinksController {
 			@ModelAttribute User user,
 			@RequestParam(required=true) String name,
 			@RequestParam(required=true) String desc,
-			@RequestParam(required=true) URL thumb,
-			@RequestParam(required=true) Integer cost,
-			@RequestParam(required=true) Boolean posted
-			) {
+			@RequestParam(required=true) String thumb,
+			@RequestParam(required=true) int cost,
+			@RequestParam(required=false, defaultValue="false") boolean posted
+			) throws IOException {
+		URL url = new URL(thumb);
 		
 		Drink newDrink = new Drink.Builder()
+			.ownerId(user.getId())
 			.name(name)
 			.description(desc)
-			.thumbnail(thumb)
+			.thumbnail(url)
 			.unitCost(cost)
 			.posted(posted)
 			.build();
 				
-		drinkService.addDrink(user, newDrink);		
+		drinkService.addDrink(user, newDrink);	
 		return "redirect:/user/drinks";
 	}
 	
@@ -112,7 +115,7 @@ public class DrinksController {
 
 	}
 	
-	@RequestMapping(value="/user/drinks", method=RequestMethod.GET)
+	@RequestMapping(value={"/user/drinks", "/home/drinks"}, method=RequestMethod.GET)
 	public String getUserDrinks(@ModelAttribute User user) {
 		if(user == null) return "redirect:/login";
 		if(user.getRole() != Role.USER) return "redirect:/home/shop";
@@ -123,5 +126,13 @@ public class DrinksController {
 	public String getShopperDrinks(@ModelAttribute User user) {
 		if(user == null) return "redirect:/login";
 		return "drinks";
+	}
+	
+	@RequestMapping(value="/home/drinks/create", method=RequestMethod.GET)
+	public String createNewDrink(
+			@ModelAttribute User user
+			) {
+		if(user == null) return "redirect:/login";
+		return "new";
 	}
 }
