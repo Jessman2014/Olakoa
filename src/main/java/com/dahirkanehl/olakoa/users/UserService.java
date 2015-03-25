@@ -1,3 +1,7 @@
+/** Allows retrieval of a user from the repository. 
+ * @author Jesse Dahir-Kanehl
+ */
+
 package com.dahirkanehl.olakoa.users;
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,5 +1,0 @@
-1,dahirkanehl@wisc.edu,Jesse,Dahir,dahirkanehl,kitty,USER,true
-2,daisysgreenhouse@gmail.com,Jesse,Kanehl,jkanehl,fish,SHOPPER,true
-3,dahir-ka.jess@uwlax.edu,Becky,Reinhold,breinhold,poinsettia,SHOPPER,true
-4,hello@gmail.com,Bob,Bilbo,bbilbo,puppy,ADMIN,true
-5,whatsup@yahoo.com,Billy,Bob,bbob,dragon,USER,true

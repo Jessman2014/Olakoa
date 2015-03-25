@@ -63,7 +63,15 @@
 					</tr>
 					<c:forEach items="${drinks}" var="drink">
 						<tr>
-							<td>${drink.name}</td>
+							<c:choose>
+								<c:when test="${user.role == 'USER'}">
+									<td><a href="/olakoa/home/detail?did=${drink.id}">${drink.name}</a></td>
+								</c:when>
+								<c:otherwise>
+									<td>${drink.name}</td>
+								</c:otherwise>
+							</c:choose>
+							
 							<td><img class="img-responsive" src="${drink.thumbnail}" alt="${drink.name} image"></td>
 							<td>${drink.description}</td>
 							<td>$${drink.unitCost/100}</td>

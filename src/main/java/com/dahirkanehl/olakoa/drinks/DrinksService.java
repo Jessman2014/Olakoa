@@ -1,3 +1,7 @@
+/**Allows filtered queries, creation, and updates to the drinks.
+ * @author Jesse Dahir-Kanehl
+ */
+
 package com.dahirkanehl.olakoa.drinks;
 
 import java.util.List;
@@ -20,7 +24,7 @@ public class DrinksService {
 	public void addDrink(User owner, Drink newDrink) {
 		if (checkOwner(owner, newDrink)) {
 			newDrink.setId(UUID.randomUUID().toString());
-			database.addDrink(newDrink);
+			database.addDrinkInMemory(newDrink);
 		}
 		else
 			throw new IllegalArgumentException();
@@ -35,7 +39,7 @@ public class DrinksService {
 
 	public void updateDrink(User owner, Drink d) {
 		if (checkOwner(owner, d)) 
-			database.updateDrink(d);
+			database.updateDrinkInMemory(d);
 		else
 			throw new IllegalArgumentException();
 	}

@@ -1,3 +1,11 @@
+/** Handles requests to the olakoa drink shop for
+ *  all users. Gives USER roles the ability to create, update,
+ *  and sort drinks. Gives SHOPPER roles the ability to
+ *  see a filtered list of drinks. Gives ADMIN roles the ability
+ *  to see all drinks. 
+ * @author Jesse Dahir-Kanehl
+ */
+
 package com.dahirkanehl.olakoa.drinks;
 
 import java.io.IOException;
@@ -68,14 +76,52 @@ public class DrinksController {
 		return result;
 	}
 	
+	@ModelAttribute("detail")
+	private Drink detail (User user, @RequestParam(required=false, defaultValue="") String did) {
+		Drink d = null;
+		if(!did.equals(""))
+			d = drinkService.findDrinkById(user, did);
+		return d;
+	}
+	
+	@RequestMapping(value={"/home/detail"}, method=RequestMethod.GET)
+	public String getDrink(@ModelAttribute User user, @RequestParam(required=true) String did) {
+		if(user == null) return "redirect:/login";
+		if(user.getRole() != Role.USER) return "redirect:/home/shop";
+		return "detail";
+	}
+	
+	@RequestMapping(value="/home/drinks/edit", method=RequestMethod.GET)
+	public String updateDrink(
+			@ModelAttribute User user,
+			@RequestParam(required=true) String name,
+			@RequestParam(required=true) String desc,
+			@RequestParam(required=true) URL thumb,
+			@RequestParam(required=true) Integer cost,
+			@RequestParam(required=false, defaultValue="false") Boolean posted,
+			@RequestParam(required=true) String did
+			) {
+		Drink d = drinkService.findDrinkById(user, did);
+		if (d != null) {
+			d.setName(name);
+			d.setDescription(desc);
+			d.setThumbnail(thumb);
+			d.setUnitCost(cost);
+			d.setPosted(posted);
+			drinkService.updateDrink(user, d);
+		}
+		return "redirect:/user/drinks";
+
+	}
+	
 	@RequestMapping(value="/home/drinks/create", method=RequestMethod.POST)
 	public String createDrink(
 			@ModelAttribute User user,
 			@RequestParam(required=true) String name,
 			@RequestParam(required=true) String desc,
 			@RequestParam(required=true) String thumb,
-			@RequestParam(required=true) int cost,
-			@RequestParam(required=false, defaultValue="false") boolean posted
+			@RequestParam(required=true) Integer cost,
+			@RequestParam(required=false, defaultValue="false") Boolean posted
 			) throws IOException {
 		URL url = new URL(thumb);
 		
@@ -92,27 +138,12 @@ public class DrinksController {
 		return "redirect:/user/drinks";
 	}
 	
-	@RequestMapping(value="/home/drinks/edit", method=RequestMethod.GET)
-	public String updateDrink(
-			@ModelAttribute User user,
-			@RequestParam(required=true) String name,
-			@RequestParam(required=true) String desc,
-			@RequestParam(required=true) URL thumb,
-			@RequestParam(required=true) Integer cost,
-			@RequestParam(required=true) Boolean posted,
-			@RequestParam(required=true) String did
+	@RequestMapping(value="/home/drinks/create", method=RequestMethod.GET)
+	public String createNewDrink(
+			@ModelAttribute User user
 			) {
-		Drink d = drinkService.findDrinkById(user, did);
-		if (d != null) {
-			d.setName(name);
-			d.setDescription(desc);
-			d.setThumbnail(thumb);
-			d.setUnitCost(cost);
-			d.setPosted(posted);
-			drinkService.updateDrink(user, d);
-		}
-		return "redirect:/user/drinks";
-
+		if(user == null) return "redirect:/login";
+		return "new";
 	}
 	
 	@RequestMapping(value={"/user/drinks", "/home/drinks"}, method=RequestMethod.GET)
@@ -126,13 +157,5 @@ public class DrinksController {
 	public String getShopperDrinks(@ModelAttribute User user) {
 		if(user == null) return "redirect:/login";
 		return "drinks";
-	}
-	
-	@RequestMapping(value="/home/drinks/create", method=RequestMethod.GET)
-	public String createNewDrink(
-			@ModelAttribute User user
-			) {
-		if(user == null) return "redirect:/login";
-		return "new";
 	}
 }

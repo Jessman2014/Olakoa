@@ -1,3 +1,10 @@
+/** Allows all enabled users to log in and routes
+ * them based on their roles. Previously logged in
+ * users will not have to log in again if session
+ * is saved.
+ * @author Jesse Dahir-Kanehl
+ */
+
 package com.dahirkanehl.olakoa;
 
 import java.io.IOException;
@@ -28,7 +35,7 @@ public class LoginController {
 						HttpServletResponse response
 						) throws IOException {
 		User user = userService.getUser(username, password);
-		if(user != null) {
+		if(user != null && user.isEnabled()) {
 			session.setAttribute("user", user);
 			if (user.getRole() == Role.USER)
 				return "redirect:/user/drinks";
@@ -40,14 +47,18 @@ public class LoginController {
 	}
 			
 	@RequestMapping(value={"/", "/login"}, method=RequestMethod.GET)
-	public String login(@RequestParam(value="error", required=false, defaultValue="false") Boolean error, Model model) {
-		//if (user == null) {
-		model.addAttribute("error", error);
+	public String login(
+			HttpSession session,
+			@RequestParam(value="error", required=false, defaultValue="false") Boolean error
+			, Model model) {
+		User user = (User)session.getAttribute("user");
+		if (user == null || !user.isEnabled()) {
+			model.addAttribute("error", error);
 			return "login";
-		//}
-		//if (user.getRole() == Role.USER)
-		//	return "redirect:/user/drinks";
-		//return "redirect:/home/shop";
+		}
+		if (user.getRole() == Role.USER)
+			return "redirect:/user/drinks";
+		return "redirect:/home/shop";
 	}
 	
 	@RequestMapping(value="/logout")

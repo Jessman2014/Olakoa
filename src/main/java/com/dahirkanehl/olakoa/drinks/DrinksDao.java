@@ -1,10 +1,17 @@
+/**Reads drinks from a csv database file and loads into memory.
+ * Allows querying, creation, and updates to both in-memory
+ * and file list of drinks.
+ * @author Jesse Dahir-Kanehl
+ */
+
 package com.dahirkanehl.olakoa.drinks;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -13,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.ServletContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -23,7 +29,7 @@ import com.dahirkanehl.olakoa.users.UserDao;
 @Repository
 public class DrinksDao {
 
-	private @Autowired ServletContext servletContext;
+	private String fileDir = "C:/Users/Administrator/Documents/drinks.db";
 	private Map<String, Drink> drinks = new HashMap<String, Drink>();
 	
 	private @Autowired UserDao userDatabase;
@@ -50,10 +56,8 @@ public class DrinksDao {
 		List<String[]> drinkStringList = new ArrayList<String[]>();
 		
 		try {
-			InputStream inputStream = null;
-			
-			inputStream = servletContext.getResourceAsStream("/WEB-INF/content/drinks.db");
-			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+			//inputStream = servletContext.getResourceAsStream("/WEB-INF/content/drinks.db");
+			BufferedReader br = new BufferedReader(new FileReader(fileDir));
 			String line = br.readLine();
 			while(line != null) {
 				String[] drinkString = line.split(",");
@@ -61,7 +65,6 @@ public class DrinksDao {
 				line = br.readLine();
 			}
 			br.close();
-			inputStream.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -69,11 +72,10 @@ public class DrinksDao {
 		}
 		return drinkStringList;
 	}
-	/*
-	private void writeNewDrink(Drink d) {
+	
+	private void writeNewDrinkToFile(Drink d) {
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(csvFile, true));
-			bw.newLine();
+			BufferedWriter bw = new BufferedWriter(new FileWriter(fileDir, true));
 			bw.write(d.toString());
 			bw.close();
 		} catch (IOException e) {
@@ -82,19 +84,18 @@ public class DrinksDao {
 		}
 	}
 	
-	private void replaceDrinks() {
+	private void replaceDrinksInFile() {
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(csvFile, false));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(fileDir, false));
 			for(Drink d: drinks.values()) {
 				bw.write(d.toString());
 				bw.newLine();
 			}
 			bw.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}*/
+	}
 
 	public List<Drink> findByOwner(String id) {
 		List<Drink> drinkList = new ArrayList<Drink>();
@@ -107,7 +108,7 @@ public class DrinksDao {
 
 	public List<Drink> findPostedEnabled() {
 		List<Drink> drinkList = new ArrayList<Drink>();
-		List<String> postedEnabledUserIds = userDatabase.getPostedEnabledUserIds();
+		List<String> postedEnabledUserIds = userDatabase.getEnabledUserIds();
 		for(Drink d: drinks.values()) {
 			if(d.isPosted() && postedEnabledUserIds.contains(d.getOwnerId()))
 				drinkList.add(d);
@@ -123,17 +124,17 @@ public class DrinksDao {
 		return drinkList;
 	}
 
-	public void addDrink(Drink newDrink) {
+	public void addDrinkInMemory(Drink newDrink) {
 		drinks.put(newDrink.getId(), newDrink);
-		//writeNewDrink(newDrink);
+		writeNewDrinkToFile(newDrink);
 	}
 
 	public Drink findById(String did) {
 		return drinks.get(did);
 	}
 
-	public void updateDrink(Drink d) {
+	public void updateDrinkInMemory(Drink d) {
 		drinks.replace(d.getId(), d);
-		//replaceDrinks();
+		replaceDrinksInFile();
 	}
 }

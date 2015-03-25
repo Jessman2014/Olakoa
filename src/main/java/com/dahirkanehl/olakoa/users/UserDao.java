@@ -1,25 +1,27 @@
-package com.dahirkanehl.olakoa.users;
+/** Reads a list of users from a csv database file
+ *  and stores in a list in memory. Allows querying
+ *  of that list.
+ * @author Jesse Dahir-Kanehl
+ */
 
+package com.dahirkanehl.olakoa.users;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.ServletContext;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class UserDao {
-	private @Autowired ServletContext servletContext;
+	private String fileDir = "C:/Users/Administrator/Documents/users.db";
 	private Map<String, User> users = new HashMap<String, User>();
 	
 	@PostConstruct
@@ -43,10 +45,8 @@ public class UserDao {
 	private List<String[]> getUsersStrings() {
 		List<String[]> userStringList = new ArrayList<String[]>();
 		try {
-			InputStream inputStream = null;
-
-			inputStream = servletContext.getResourceAsStream("/WEB-INF/content/users.db");
-			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+			//inputStream = servletContext.getResourceAsStream("/WEB-INF/content/users.db");
+			BufferedReader br = new BufferedReader(new FileReader(fileDir));
 			String line = br.readLine();
 			while(line != null) {
 				String[] userString = line.split(",");
@@ -54,7 +54,6 @@ public class UserDao {
 				line = br.readLine();
 			}
 			br.close();
-			inputStream.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -68,7 +67,7 @@ public class UserDao {
 		return users.get(username);
 	}
 
-	public List<String> getPostedEnabledUserIds() {
+	public List<String> getEnabledUserIds() {
 		List<String> userList = new ArrayList<String>();
 		for(User u: users.values()) {
 			if(u.isEnabled())
